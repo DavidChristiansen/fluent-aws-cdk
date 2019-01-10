@@ -1,0 +1,52 @@
+{
+	"name": "fluent.aws-cdk",
+	"version": "0.1.0-alpha",
+	"main": "lib/fluentcdk.js",
+	"types": "lib/fluentcdk.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w",
+		"test": "nodeunit test/test.*.js"
+	},
+	"author": {
+		"name": "David Christiansen",
+		"url": "https://davedoes.net"
+	},
+	"description": "Fluent Interface for AWS-CDK Applications",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DavidChristiansen/fluent-aws-cdk.git"
+	},
+	"license": "Apache-2.0",
+	"keywords": [
+		"fluent",
+		"aws",
+		"cdk"
+	],
+	"bugs": {
+		"url": "https://github.com/DavidChristiansen/fluent-aws-cdk/issues"
+	},
+	"engines": {
+		"node": ">= 8.10.0"
+	},
+	"homepage": "https://github.com/DavidChristiansen/fluent-aws-cdk",
+	"devDependencies": {
+		"@types/nodeunit": "^0.0.30",
+		"nodeunit": "^0.11.2",
+		"typescript": "^3.1.2"
+	},
+	"peerDependencies": {
+		"@aws-cdk/cdk": "^0.21.0",
+		"@aws-cdk/app-delivery": "^0.21.0",
+		"@aws-cdk/aws-codebuild": "^0.21.0",
+		"@aws-cdk/aws-codecommit": "^0.21.0",
+		"@aws-cdk/aws-codepipeline": "^0.21.0"
+	},
+	"dependencies": {
+		"@aws-cdk/cdk": "^0.21.0",
+		"@aws-cdk/app-delivery": "^0.21.0",
+		"@aws-cdk/aws-codebuild": "^0.21.0",
+		"@aws-cdk/aws-codecommit": "^0.21.0",
+		"@aws-cdk/aws-codepipeline": "^0.21.0"
+	}
+}
