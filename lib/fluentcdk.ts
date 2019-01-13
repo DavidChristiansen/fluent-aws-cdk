@@ -1,5 +1,6 @@
 import cdk = require('@aws-cdk/cdk');
 import codepipeline = require('@aws-cdk/aws-codepipeline');
+import codepipelineapi = require('@aws-cdk/aws-codepipeline-api');
 import codecommit = require('@aws-cdk/aws-codecommit');
 import codebuild = require('@aws-cdk/aws-codebuild');
 import cicd = require('@aws-cdk/app-delivery');
@@ -60,7 +61,7 @@ export class MasterBuilder extends Builder {
   parent: cdk.App;
   stackPrefix: string;
   constructStore: ConstructStore = new ConstructStore();
-  constructReturnValues: Map<string, cdk.FnImportValue>;
+  constructReturnValues: Map<string, cdk.IConstruct>;
   pipelines: codepipeline.Pipeline[];
   cicdStack: cdk.Stack;
   synthesisedApps: SynthesisedAppsStore;
@@ -68,7 +69,7 @@ export class MasterBuilder extends Builder {
   constructor(parent: cdk.App, prefix?: string, appendPrefixSeparator: boolean = true) {
     super();
     this.parent = parent;
-    this.constructReturnValues = new Map<string, cdk.FnImportValue>();
+    this.constructReturnValues = new Map<string, cdk.IConstruct>();
     if (prefix) {
       this.stackPrefix = prefix;
       if (appendPrefixSeparator && (!prefix.endsWith('-')))
@@ -102,11 +103,12 @@ export class MasterBuilder extends Builder {
     }, props);
     this.pipelines.forEach(pipeline => {
       const stageName = 'Deploy-' + constructStack.name;
-      const deployStage = pipeline.addStage(stageName)
-      new cicd.PipelineDeployStackAction(this.cicdStack, stageName + pipeline.id, {
+      const deployStage = pipeline.addStage(stageName);
+      const pipelineName = pipeline.node.resolve(pipeline.pipelineName).Ref;
+      new cicd.PipelineDeployStackAction(this.cicdStack, stageName + "-for-" + pipelineName, {
         stage: deployStage,
         stack: constructStack,
-        inputArtifact: this.synthesisedApps[pipeline.id],
+        inputArtifact: this.synthesisedApps[pipelineName],
         createChangeSetRunOrder: 998,
         adminPermissions: true,
       });
@@ -169,7 +171,7 @@ export class StackBuilder extends Builder {
     return this;
   }
 
-  GetImportValue(name: string): cdk.FnImportValue | undefined {
+  GetImportValue(name: string): cdk.IConstruct | undefined {
     const value = this.masterBuilder.constructReturnValues.get(name);
     return value;
   }
@@ -193,7 +195,7 @@ export class FluentConstruct extends cdk.Construct implements cdk.ITaggable {
   ConstructStore: ConstructStore;
   Props: IFluentStackProps;
   Prefix: string;
-  constructReturnValues: Map<string, cdk.FnImportValue> = new Map<string, cdk.FnImportValue>();
+  constructReturnValues: Map<string, cdk.IConstruct> = new Map<string, cdk.IConstruct>();
   constructor(parent: cdk.Construct, name: string, props: IFluentStackProps, constructStore: ConstructStore) {
     super(parent, name);
     this.ConstructStore = constructStore;
@@ -201,7 +203,7 @@ export class FluentConstruct extends cdk.Construct implements cdk.ITaggable {
     this.Prefix = (parent as FluentStack).stackPrefix;
     this.tags = new cdk.TagManager(parent);
   }
-  StoreOutput(name: string, value: cdk.FnImportValue): any {
+  StoreOutput(name: string, value: cdk.IConstruct): any {
     this.constructReturnValues.set(name, value);
   }
 }
@@ -211,7 +213,7 @@ export class CICDProps extends FluentStackProps {
   CreateNewRepo: boolean = true;
 }
 export class SynthesisedAppsStore implements IHash<any>  {
-  [details: string]: any;
+  [details: string]: codepipelineapi.Artifact;
 }
 export class CICD extends FluentConstruct {
   parent: cdk.Stack;
@@ -263,15 +265,16 @@ export class CICD extends FluentConstruct {
       projectName: this.props.CICDPipeLineName + '-CodeBuild-' + branchName,
       buildSpec: this.props.CICDPipeLineName + '_buildspec.yml',
     });
+    const pipelineName = this.node.resolve(pipeline.pipelineName).Ref;
     const buildStage = pipeline.addStage('Build');
     const buildAction = project.addToPipeline(buildStage, 'BuildAction');
-    this.synthesizedApps[name] = buildAction.outputArtifact;
+    this.synthesizedApps[pipelineName] = buildAction.outputArtifact;
     const selfUpdateStage = pipeline.addStage('SelfUpdate');
     new cicd.PipelineDeployStackAction(cicdConstruct, 'SelfUpdatePipeline', {
       adminPermissions: true,
       stage: selfUpdateStage,
       stack: this.parent,
-      inputArtifact: this.synthesizedApps[name],
+      inputArtifact: this.synthesizedApps[pipelineName],
     });
     return pipeline;
   }

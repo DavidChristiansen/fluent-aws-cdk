@@ -52,6 +52,6 @@ export class VPCs extends fluentCDK.FluentConstruct {
             subnetConfiguration: subnetConfiguration
         });
 
-        this.ConstructStore.SharedResources[name] = newVpc.export();
+        this.ConstructStore.SharedResources[name] = newVpc;
     }
 }
