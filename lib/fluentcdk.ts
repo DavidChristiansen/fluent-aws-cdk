@@ -101,18 +101,20 @@ export class MasterBuilder extends Builder {
       constructStack = sb.stack;
       callStackBuilder(sb);
     }, props);
-    this.pipelines.forEach(pipeline => {
-      const stageName = 'Deploy-' + constructStack.name;
-      const deployStage = pipeline.addStage(stageName);
-      const pipelineName = pipeline.node.resolve(pipeline.pipelineName).Ref;
-      new cicd.PipelineDeployStackAction(this.cicdStack, stageName + "-for-" + pipelineName, {
-        stage: deployStage,
-        stack: constructStack,
-        inputArtifact: this.synthesisedApps[pipelineName],
-        createChangeSetRunOrder: 998,
-        adminPermissions: true,
+    if (this.pipelines) {
+      this.pipelines.forEach(pipeline => {
+        const stageName = 'Deploy-' + constructStack.name;
+        const deployStage = pipeline.addStage(stageName);
+        const pipelineName = pipeline.node.resolve(pipeline.pipelineName).Ref;
+        new cicd.PipelineDeployStackAction(this.cicdStack, stageName + "-for-" + pipelineName, {
+          stage: deployStage,
+          stack: constructStack,
+          inputArtifact: this.synthesisedApps[pipelineName],
+          createChangeSetRunOrder: 998,
+          adminPermissions: true,
+        });
       });
-    });
+    }
     return this;
   };
 
