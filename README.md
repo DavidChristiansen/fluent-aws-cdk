@@ -1,6 +1,6 @@
 # ıllıllı ᖴᒪᑌEᑎT.ᗩᗯᔕ.ᑕᗪK ıllıllı
 
-A fluent style interface for AWS-CDK.  This is a personal project and should not, at the moment in time, be used in production. YMMV
+A fluent style interface for AWS-CDK.  This is a personal project, not affiliated with Amazon or AWS, and should not be used in production. YMMV
 
 ## Installation
 
