@@ -2,21 +2,17 @@
 
 A fluent style interface for AWS-CDK.  This is a personal project and should not, at the moment in time, be used in production. YMMV
 
-<!-- Patience is not simply the ability to wait - it's how we behave while we're waiting.
-
 ## Installation
 
 via NPM
 ```bash
-npm install --save @davedoes/aws-cdk/fluent
+npm install --save fluent.aws-cdk
 ```
 
 or via yarn
 ```bash
-yarn install --save @davedoes/aws-cdk/fluent
+yarn install --save fluent.aws-cdk
 ```
-
--->
 
 ## Example usage
 
