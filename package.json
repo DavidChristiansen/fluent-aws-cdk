@@ -1,6 +1,6 @@
 {
 	"name": "fluent.aws-cdk",
-	"version": "0.1.4-alpha",
+	"version": "0.1.4",
 	"main": "lib/fluentcdk.js",
 	"types": "lib/fluentcdk.d.ts",
 	"scripts": {
