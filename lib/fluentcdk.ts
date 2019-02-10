@@ -158,14 +158,14 @@ export class StackBuilder extends Builder {
     props: T2,
     addConstructCallback?: ConstructCallback<T>): StackBuilder {
     const construct = new type(this.stack, name, props, this.constructStore);
-    construct.tags.setTag('CreatedByStack', this.stack.name);
+    construct.apply(new cdk.Tag('CreatedByStack', this.stack.name));
     construct.constructReturnValues.forEach((value, key) => {
       this.masterBuilder.constructReturnValues.set(key, value);
     });
     if (props)
       if (props.tags)
         props.tags.forEach(tag => {
-          construct.tags.setTag(tag.key, tag.value);
+          construct.apply(new cdk.Tag(tag.key, tag.value));
         });
     if (addConstructCallback) {
       addConstructCallback(new ConstructBuilder(construct), construct);
@@ -189,11 +189,10 @@ export class ConstructBuilder<TConstruct extends FluentConstruct> extends Builde
   }
 
   addTag(key: string, value: string) {
-    this.construct.tags.setTag(key, value);
+    this.construct.apply(new cdk.Tag(key, value));
   }
 }
-export class FluentConstruct extends cdk.Construct implements cdk.ITaggable {
-  tags: cdk.TagManager;
+export class FluentConstruct extends cdk.Construct {
   ConstructStore: ConstructStore;
   Props: IFluentStackProps;
   Prefix: string;
@@ -203,7 +202,6 @@ export class FluentConstruct extends cdk.Construct implements cdk.ITaggable {
     this.ConstructStore = constructStore;
     this.Props = props;
     this.Prefix = (parent as FluentStack).stackPrefix;
-    this.tags = new cdk.TagManager(parent);
   }
   StoreOutput(name: string, value: cdk.IConstruct): any {
     this.constructReturnValues.set(name, value);
