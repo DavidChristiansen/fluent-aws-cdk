@@ -32,21 +32,21 @@
 	"homepage": "https://github.com/DavidChristiansen/fluent-aws-cdk",
 	"devDependencies": {
 		"@types/nodeunit": "^0.0.30",
-		"nodeunit": "^0.11.2",
-		"typescript": "^3.1.2"
+		"nodeunit": "^0.11.3",
+		"typescript": "^3.3.3333"
 	},
 	"peerDependencies": {
-		"@aws-cdk/cdk": "^0.24.1",
-		"@aws-cdk/app-delivery": "^0.24.1",
-		"@aws-cdk/aws-codebuild": "^0.24.1",
-		"@aws-cdk/aws-codecommit": "^0.24.1",
-		"@aws-cdk/aws-codepipeline": "^0.24.1"
+		"@aws-cdk/cdk": "^0.25.0",
+		"@aws-cdk/app-delivery": "^0.25.0",
+		"@aws-cdk/aws-codebuild": "^0.25.0",
+		"@aws-cdk/aws-codecommit": "^0.25.0",
+		"@aws-cdk/aws-codepipeline": "^0.25.0"
 	},
 	"dependencies": {
-		"@aws-cdk/cdk": "^0.24.1",
-		"@aws-cdk/app-delivery": "^0.24.1",
-		"@aws-cdk/aws-codebuild": "^0.24.1",
-		"@aws-cdk/aws-codecommit": "^0.24.1",
-		"@aws-cdk/aws-codepipeline": "^0.24.1"
+		"@aws-cdk/cdk": "^0.25.0",
+		"@aws-cdk/app-delivery": "^0.25.0",
+		"@aws-cdk/aws-codebuild": "^0.25.0",
+		"@aws-cdk/aws-codecommit": "^0.25.0",
+		"@aws-cdk/aws-codepipeline": "^0.25.0"
 	}
 }
