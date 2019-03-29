@@ -104,15 +104,17 @@ export class MasterBuilder extends Builder {
     if (this.pipelines) {
       this.pipelines.forEach(pipeline => {
         const stageName = 'Deploy-' + constructStack.name;
-        const deployStage = pipeline.addStage(stageName);
         const pipelineName = pipeline.node.resolve(pipeline.pipelineName).Ref;
+        const deployStage = pipeline.addStage({
+          name: stageName
+        });
         new cicd.PipelineDeployStackAction(this.cicdStack, stageName + "-for-" + pipelineName, {
           stage: deployStage,
           stack: constructStack,
           inputArtifact: this.synthesisedApps[pipelineName],
           createChangeSetRunOrder: 998,
           adminPermissions: true,
-        });
+        })
       });
     }
     return this;
@@ -158,14 +160,17 @@ export class StackBuilder extends Builder {
     props: T2,
     addConstructCallback?: ConstructCallback<T>): StackBuilder {
     const construct = new type(this.stack, name, props, this.constructStore);
-    construct.apply(new cdk.Tag('CreatedByStack', this.stack.name));
+    construct.Props.tags = [
+      new cdk.Tag('CreatedByStack', this.stack.name)
+    ];
+    //.();
     construct.constructReturnValues.forEach((value, key) => {
       this.masterBuilder.constructReturnValues.set(key, value);
     });
     if (props)
       if (props.tags)
         props.tags.forEach(tag => {
-          construct.apply(new cdk.Tag(tag.key, tag.value));
+          construct.Props.tags = [new cdk.Tag(tag.key, tag.value)];
         });
     if (addConstructCallback) {
       addConstructCallback(new ConstructBuilder(construct), construct);
@@ -189,7 +194,7 @@ export class ConstructBuilder<TConstruct extends FluentConstruct> extends Builde
   }
 
   addTag(key: string, value: string) {
-    this.construct.apply(new cdk.Tag(key, value));
+    this.construct.Props.tags = [new cdk.Tag(key, value)];
   }
 }
 export class FluentConstruct extends cdk.Construct {
@@ -217,7 +222,7 @@ export class SynthesisedAppsStore implements IHash<any>  {
 }
 export class CICD extends FluentConstruct {
   parent: cdk.Stack;
-  deployStage: codepipeline.Stage;
+  deployStage: any;
   synthesizedApps: SynthesisedAppsStore = {};
   pipelines: codepipeline.Pipeline[] = [];
   props: CICDProps;
@@ -250,14 +255,16 @@ export class CICD extends FluentConstruct {
       pipelineName: name,
       restartExecutionOnUpdate: true,
     });
-    const sourceStage = new codepipeline.Stage(cicdConstruct, 'Source', {
-      pipeline: pipeline
-    });
-    new codecommit.PipelineSourceAction(sourceStage, 'Source', {
-      stage: sourceStage,
+    const sourceStage = pipeline.addStage({
+      name: 'Source'
+    })
+    const sourceAction = new codecommit.PipelineSourceAction({
+      actionName: 'PipelineSource',
       repository: repository,
-      branch: branchName
+      branch: branchName,
+      outputArtifactName:'SourceArtifact'
     });
+    sourceStage.addAction(sourceAction);
     const project = new codebuild.PipelineProject(cicdConstruct, 'CodeBuild', {
       environment: {
         buildImage: codebuild.LinuxBuildImage.UBUNTU_14_04_NODEJS_10_1_0,
@@ -266,10 +273,18 @@ export class CICD extends FluentConstruct {
       buildSpec: this.props.CICDPipeLineName + '_buildspec.yml',
     });
     const pipelineName = this.node.resolve(pipeline.pipelineName).Ref;
-    const buildStage = pipeline.addStage('Build');
-    const buildAction = project.addToPipeline(buildStage, 'BuildAction');
+    const buildStage = pipeline.addStage({
+      name: 'Build'
+    });
+    const buildAction = project.toCodePipelineBuildAction({
+      actionName:'BuildAction',
+      inputArtifact: sourceAction.outputArtifact
+    });
+    buildStage.addAction(buildAction);
     this.synthesizedApps[pipelineName] = buildAction.outputArtifact;
-    const selfUpdateStage = pipeline.addStage('SelfUpdate');
+    const selfUpdateStage = pipeline.addStage({
+      name:'SelfUpdate'
+    });
     new cicd.PipelineDeployStackAction(cicdConstruct, 'SelfUpdatePipeline', {
       adminPermissions: true,
       stage: selfUpdateStage,

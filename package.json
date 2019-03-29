@@ -33,20 +33,20 @@
 	"devDependencies": {
 		"@types/nodeunit": "^0.0.30",
 		"nodeunit": "^0.11.3",
-		"typescript": "^3.3.3333"
+		"typescript": "^3.3.4000"
 	},
 	"peerDependencies": {
-		"@aws-cdk/cdk": "^0.25.0",
-		"@aws-cdk/app-delivery": "^0.25.0",
-		"@aws-cdk/aws-codebuild": "^0.25.0",
-		"@aws-cdk/aws-codecommit": "^0.25.0",
-		"@aws-cdk/aws-codepipeline": "^0.25.0"
+		"@aws-cdk/cdk": "^0.27.0",
+		"@aws-cdk/app-delivery": "^0.27.0",
+		"@aws-cdk/aws-codebuild": "^0.27.0",
+		"@aws-cdk/aws-codecommit": "^0.27.0",
+		"@aws-cdk/aws-codepipeline": "^0.27.0"
 	},
 	"dependencies": {
-		"@aws-cdk/cdk": "^0.25.0",
-		"@aws-cdk/app-delivery": "^0.25.0",
-		"@aws-cdk/aws-codebuild": "^0.25.0",
-		"@aws-cdk/aws-codecommit": "^0.25.0",
-		"@aws-cdk/aws-codepipeline": "^0.25.0"
+		"@aws-cdk/cdk": "^0.27.0",
+		"@aws-cdk/app-delivery": "^0.27.0",
+		"@aws-cdk/aws-codebuild": "^0.27.0",
+		"@aws-cdk/aws-codecommit": "^0.27.0",
+		"@aws-cdk/aws-codepipeline": "^0.27.0"
 	}
 }
